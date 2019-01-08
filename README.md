@@ -3,8 +3,8 @@ knnfiler-go
 
 ## init
 ```
-go get github.com/kannono1/knnfiler-go
-go get github.com/nsf/termbox-go
+go get -u github.com/kannono1/knnfiler-go
+go get -u github.com/nsf/termbox-go
 ```
 
 
