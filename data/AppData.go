@@ -5,6 +5,7 @@ import (
 )
 
 type AppData struct{
+	Wid int
 	CurrentDirectory[2]string
 	CurrentCursorIndex[2]int
 	FileList[2][]FileInfo
@@ -13,8 +14,8 @@ type AppData struct{
 func (a *AppData) Initialize() {
 	a.CurrentDirectory[0] = "aaaa"
 	a.CurrentDirectory[1] = "bbbb"
-	a.FileList[0] = make([]FileInfo, 3)
-    for i, _ := range a.FileList[0] {
-		a.FileList[0][i].FileName = "FILE" + strconv.Itoa(i)
+	a.FileList[a.Wid] = make([]FileInfo, 13)
+    for i, _ := range a.FileList[a.Wid] {
+		a.FileList[a.Wid][i].FileName = "FILE" + strconv.Itoa(i)
 	}
 }
