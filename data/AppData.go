@@ -22,10 +22,20 @@ func (a *AppData) ReadDir(wid int, dir string) {
 		a.FileList[wid][i].FileName = f.Name()
 	}
 }
-func (a *AppData) GotoParentDir(wid int){
+func (a *AppData) EnterDir(wid int){
+	dir := filepath.Join(a.CurrentDirectory[wid], a.GetListFileName(wid, a.CurrentCursorIndex[wid]))
+	a.GotoDir(wid, dir)
+}
+func (a *AppData) GetListFileName(wid int, i int) string {
+	return a.FileList[wid][i].FileName
+}
+func (a *AppData) GotoDir(wid int, dir string){
 	a.CurrentCursorIndex[wid] = 0
-	a.CurrentDirectory[wid] = filepath.Dir(a.CurrentDirectory[wid])
+	a.CurrentDirectory[wid] = dir
 	a.ReadDir(wid, a.CurrentDirectory[wid])
+}
+func (a *AppData) GotoParentDir(wid int){
+	a.GotoDir(wid, filepath.Dir(a.CurrentDirectory[wid]))
 }
 
 func (a *AppData) Initialize() {

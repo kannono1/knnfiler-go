@@ -87,6 +87,9 @@ func switchWindow(){
         a.Wid = 0
     }
 }
+func enter(){
+    a.EnterDir(a.Wid)
+}
 
 func main() {
 	initialize()
@@ -118,7 +121,8 @@ MAINLOOP:
 					cursorDown()
 				case 107: // h
 					cursorUp()
-				//case 108: // l
+                case 108: // l
+                    enter()
 				case 113: // q
 					break MAINLOOP
 				}
