@@ -35,8 +35,11 @@ func drawHeader() {
 	drawX(0, 1, "         ", 0, 1)
 }
 
-func getRowColor(i int) (int, int) {
-	if i == a.CurrentCursorIndex[0] {
+func getRowColor(w int, i int) (int, int) {
+	if w != a.Wid {
+        return 0, 0
+    }
+	if i == a.CurrentCursorIndex[a.Wid] {
 		return 1, 3
 	} else {
 		return 0, 0
@@ -47,12 +50,13 @@ func drawList() {
 	w, _ := termbox.Size()
 	w2x := int(w / 2)
 	for i, _ := range a.FileList[0] {
-		cf, cb := getRowColor(i)
+		cf, cb := getRowColor(0, i)
 		drawX(0, 2+i, a.FileList[0][i].FileName, cf, cb)
 	}
-	drawX(w2x, 2, "こんにちは", 0, 0)
-	drawX(w2x, 3, "abcあいう", 0, 0)
-	drawX(w2x, 4, "a c い | う", 0, 0)
+	for i, _ := range a.FileList[1] {
+		cf, cb := getRowColor(1, i)
+		drawX(w2x, 2+i, a.FileList[1][i].FileName, cf, cb)
+	}
 }
 
 func redraw() {
@@ -67,7 +71,7 @@ func initialize() {
 }
 
 func cursorDown() {
-	if a.CurrentCursorIndex[a.Wid] < 13-1 {
+	if a.CurrentCursorIndex[a.Wid] < a.FileListRowNum[a.Wid]-1 {
 		a.CurrentCursorIndex[a.Wid] += 1
 	}
 }
@@ -75,6 +79,13 @@ func cursorUp() {
 	if a.CurrentCursorIndex[a.Wid] > 0 {
 		a.CurrentCursorIndex[a.Wid] -= 1
 	}
+}
+func switchWindow(){
+    if(a.Wid == 0){
+        a.Wid = 1
+    } else {
+        a.Wid = 0
+    }
 }
 
 func main() {
@@ -96,6 +107,8 @@ MAINLOOP:
 				cursorUp()
 			case termbox.KeyEsc:
 				break MAINLOOP
+            case termbox.KeyTab:
+                switchWindow()
 			default:
 				//log.Print("key", ev.Key, ev.Ch)
 				switch ev.Ch {
