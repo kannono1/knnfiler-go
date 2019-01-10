@@ -54,19 +54,15 @@ func drawList(wid int) {
 	if wid == 1 {
 		w2x = int(w / 2)
 	}
-	offset := 0
-	if a.CurrentCursorIndex[wid] >= a.MaxScreenListRowNum {
-		offset = a.CurrentCursorIndex[wid] - a.MaxScreenListRowNum +1
-	log.Print("FFFFFFFFF=", offset, a.CurrentCursorIndex[wid], a.MaxScreenListRowNum, "w=", wid)
-	}
+	offset := a.CurrentCursorIndex[wid] - (a.MaxScreenListRowNum - 1) + (a.MaxScreenListRowNum - 1 - a.CurrentScreenCursorIndex[wid])
 	ll := a.FileListRowNum[wid]
 	if ll > a.MaxScreenListRowNum {
 		ll = a.MaxScreenListRowNum
 	}
 	log.Print("Offset=", offset, a.CurrentCursorIndex[wid], a.MaxScreenListRowNum, " w=", wid, " si=", a.CurrentScreenCursorIndex[wid])
 	for i := 0; i < ll; i++ {
-		cf, cb := getRowColor(wid, i +offset)
-		drawX(w2x, 2+i, a.FileList[wid][i +offset].FileName, cf, cb)
+		cf, cb := getRowColor(wid, i+offset)
+		drawX(w2x, 2+i, a.FileList[wid][i+offset].FileName, cf, cb)
 	}
 }
 func redraw() {
@@ -83,8 +79,8 @@ func initialize() {
 		panic("cannnot open test.log:" + err.Error())
 	}
 	// defer logfile.Close()
-    log.SetOutput(logfile)
-    log.Println("START !!")
+	log.SetOutput(logfile)
+	log.Println("START !!")
 	a.Initialize()
 }
 
