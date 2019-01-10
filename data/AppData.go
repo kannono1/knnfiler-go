@@ -12,6 +12,7 @@ type AppData struct{
 	CurrentCursorIndex[2]int
 	FileList[2][]FileInfo
 	FileListRowNum[2]int
+	MaxScreenListRowNum int
 }
 
 func (a *AppData) ReadDir(wid int, dir string) {

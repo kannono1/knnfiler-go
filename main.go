@@ -46,30 +46,38 @@ func getRowColor(w int, i int) (int, int) {
 	}
 }
 
-func drawList() {
-	w, _ := termbox.Size()
-	w2x := int(w / 2)
-	for i, _ := range a.FileList[0] {
-		cf, cb := getRowColor(0, i)
-		drawX(0, 2+i, a.FileList[0][i].FileName, cf, cb)
-	}
-	for i, _ := range a.FileList[1] {
-		cf, cb := getRowColor(1, i)
-		drawX(w2x, 2+i, a.FileList[1][i].FileName, cf, cb)
+func drawList(wid int) {
+    w, h := termbox.Size()
+    a.MaxScreenListRowNum = h -2
+    w2x := 0
+    if wid == 1 {
+        w2x = int(w / 2)
+    }
+    // offset := 0
+    // if a.CurrentCursorIndex[wid] >= a.MaxScreenListRowNum {
+    //     offset = a.CurrentCursorIndex[wid] - a.MaxScreenListRowNum
+    // }
+    ll := a.FileListRowNum[wid]
+    if ll > a.MaxScreenListRowNum {
+        ll = a.MaxScreenListRowNum
+    }
+    for i := 0; i < ll; i++ {
+		cf, cb := getRowColor(wid, i)
+		drawX(w2x, 2+i, a.FileList[wid][i].FileName, cf, cb)
 	}
 }
-
 func redraw() {
 	termbox.Clear(coldef, coldef)
 	drawHeader()
-	drawList()
+	drawList(0)
+	drawList(1)
 	termbox.Flush()
 }
 
 func initialize() {
 	a.Initialize()
 }
-
+	
 func cursorDown() {
 	if a.CurrentCursorIndex[a.Wid] < a.FileListRowNum[a.Wid]-1 {
 		a.CurrentCursorIndex[a.Wid] += 1
