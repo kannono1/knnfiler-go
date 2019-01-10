@@ -2,6 +2,7 @@ package main
 
 import (
 	"./data"
+	//"log"
 	"github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"
 )
@@ -95,6 +96,16 @@ MAINLOOP:
 				cursorUp()
 			case termbox.KeyEsc:
 				break MAINLOOP
+			default:
+				//log.Print("key", ev.Key, ev.Ch)
+				switch ev.Ch {
+				case 106: // j
+					cursorDown()
+				case 107: // h
+					cursorUp()
+				case 113: // q
+					break MAINLOOP
+				}
 			}
 		}
 		redraw()
