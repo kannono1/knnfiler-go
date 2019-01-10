@@ -2,7 +2,7 @@ package main
 
 import (
 	"./data"
-    //"log"
+    // "log"
 	"github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"
 )
@@ -31,7 +31,7 @@ func drawX(x, y int, str string, fgColor int, bgColor int) {
 }
 
 func drawHeader() {
-	drawX(0, 0, a.CurrentDirectory[0], 0, 0)
+	drawX(0, 0, a.CurrentDirectory[a.Wid], 0, 0)
 	drawX(0, 1, "         ", 0, 1)
 }
 
@@ -112,10 +112,13 @@ MAINLOOP:
 			default:
 				//log.Print("key", ev.Key, ev.Ch)
 				switch ev.Ch {
+                case 104: // h
+                    a.GotoParentDir(a.Wid)
 				case 106: // j
 					cursorDown()
 				case 107: // h
 					cursorUp()
+				//case 108: // l
 				case 113: // q
 					break MAINLOOP
 				}

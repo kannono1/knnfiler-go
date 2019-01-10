@@ -3,6 +3,7 @@ package data
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 )
 
 type AppData struct{
@@ -20,6 +21,11 @@ func (a *AppData) ReadDir(wid int, dir string) {
     for i, f := range files {
 		a.FileList[wid][i].FileName = f.Name()
 	}
+}
+func (a *AppData) GotoParentDir(wid int){
+	a.CurrentCursorIndex[wid] = 0
+	a.CurrentDirectory[wid] = filepath.Dir(a.CurrentDirectory[wid])
+	a.ReadDir(wid, a.CurrentDirectory[wid])
 }
 
 func (a *AppData) Initialize() {
