@@ -2,9 +2,10 @@ package main
 
 import (
 	"./data"
-    // "log"
 	"github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"
+	"log"
+	"os"
 )
 
 const coldef = termbox.ColorDefault
@@ -37,8 +38,8 @@ func drawHeader() {
 
 func getRowColor(w int, i int) (int, int) {
 	if w != a.Wid {
-        return 0, 0
-    }
+		return 0, 0
+	}
 	if i == a.CurrentCursorIndex[a.Wid] {
 		return 1, 3
 	} else {
@@ -47,23 +48,25 @@ func getRowColor(w int, i int) (int, int) {
 }
 
 func drawList(wid int) {
-    w, h := termbox.Size()
-    a.MaxScreenListRowNum = h -2
-    w2x := 0
-    if wid == 1 {
-        w2x = int(w / 2)
-    }
-    // offset := 0
-    // if a.CurrentCursorIndex[wid] >= a.MaxScreenListRowNum {
-    //     offset = a.CurrentCursorIndex[wid] - a.MaxScreenListRowNum
-    // }
-    ll := a.FileListRowNum[wid]
-    if ll > a.MaxScreenListRowNum {
-        ll = a.MaxScreenListRowNum
-    }
-    for i := 0; i < ll; i++ {
-		cf, cb := getRowColor(wid, i)
-		drawX(w2x, 2+i, a.FileList[wid][i].FileName, cf, cb)
+	w, h := termbox.Size()
+	a.MaxScreenListRowNum = h - 2
+	w2x := 0
+	if wid == 1 {
+		w2x = int(w / 2)
+	}
+	offset := 0
+	if a.CurrentCursorIndex[wid] >= a.MaxScreenListRowNum {
+		offset = a.CurrentCursorIndex[wid] - a.MaxScreenListRowNum +1
+	log.Print("FFFFFFFFF=", offset, a.CurrentCursorIndex[wid], a.MaxScreenListRowNum, "w=", wid)
+	}
+	ll := a.FileListRowNum[wid]
+	if ll > a.MaxScreenListRowNum {
+		ll = a.MaxScreenListRowNum
+	}
+	log.Print("Offset=", offset, a.CurrentCursorIndex[wid], a.MaxScreenListRowNum, "w=", wid)
+	for i := 0; i < ll; i++ {
+		cf, cb := getRowColor(wid, i +offset)
+		drawX(w2x, 2+i, a.FileList[wid][i +offset].FileName, cf, cb)
 	}
 }
 func redraw() {
@@ -75,9 +78,16 @@ func redraw() {
 }
 
 func initialize() {
+	logfile, err := os.Create("test.log")
+	if err != nil {
+		panic("cannnot open test.log:" + err.Error())
+	}
+	// defer logfile.Close()
+    log.SetOutput(logfile)
+    log.Println("START !!")
 	a.Initialize()
 }
-	
+
 func cursorDown() {
 	if a.CurrentCursorIndex[a.Wid] < a.FileListRowNum[a.Wid]-1 {
 		a.CurrentCursorIndex[a.Wid] += 1
@@ -88,15 +98,15 @@ func cursorUp() {
 		a.CurrentCursorIndex[a.Wid] -= 1
 	}
 }
-func switchWindow(){
-    if(a.Wid == 0){
-        a.Wid = 1
-    } else {
-        a.Wid = 0
-    }
+func switchWindow() {
+	if a.Wid == 0 {
+		a.Wid = 1
+	} else {
+		a.Wid = 0
+	}
 }
-func enter(){
-    a.EnterDir(a.Wid)
+func enter() {
+	a.EnterDir(a.Wid)
 }
 
 func main() {
@@ -118,19 +128,19 @@ MAINLOOP:
 				cursorUp()
 			case termbox.KeyEsc:
 				break MAINLOOP
-            case termbox.KeyTab:
-                switchWindow()
+			case termbox.KeyTab:
+				switchWindow()
 			default:
 				//log.Print("key", ev.Key, ev.Ch)
 				switch ev.Ch {
-                case 104: // h
-                    a.GotoParentDir(a.Wid)
+				case 104: // h
+					a.GotoParentDir(a.Wid)
 				case 106: // j
 					cursorDown()
 				case 107: // h
 					cursorUp()
-                case 108: // l
-                    enter()
+				case 108: // l
+					enter()
 				case 113: // q
 					break MAINLOOP
 				}
