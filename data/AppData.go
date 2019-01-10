@@ -1,7 +1,8 @@
 package data
 
 import (
-	"strconv"
+	"io/ioutil"
+	"os"
 )
 
 type AppData struct{
@@ -12,17 +13,18 @@ type AppData struct{
 	FileListRowNum[2]int
 }
 
+func (a *AppData) ReadDir(wid int, dir string) {
+	files, _ := ioutil.ReadDir(dir)
+	a.FileListRowNum[wid] = len(files)
+	a.FileList[wid] = make([]FileInfo, a.FileListRowNum[wid])
+    for i, f := range files {
+		a.FileList[wid][i].FileName = f.Name()
+	}
+}
+
 func (a *AppData) Initialize() {
-	a.CurrentDirectory[0] = "aaaa"
-	a.CurrentDirectory[1] = "bbbb"
-	a.FileList[0] = make([]FileInfo, 13)
-	a.FileList[1] = make([]FileInfo, 11)
-    for i, _ := range a.FileList[0] {
-		a.FileList[0][i].FileName = "FILEA" + strconv.Itoa(i)
-	}
-    for i, _ := range a.FileList[1] {
-		a.FileList[1][i].FileName = "FILEB" + strconv.Itoa(i)
-	}
-	a.FileListRowNum[0] = len(a.FileList[0])
-	a.FileListRowNum[1] = len(a.FileList[1])
+	a.CurrentDirectory[0], _ = os.Getwd()
+	a.CurrentDirectory[1], _ = os.Getwd()
+	a.ReadDir(0, a.CurrentDirectory[0])
+	a.ReadDir(1, a.CurrentDirectory[1])
 }

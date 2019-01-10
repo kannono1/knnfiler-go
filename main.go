@@ -2,7 +2,7 @@ package main
 
 import (
 	"./data"
-	//"log"
+    //"log"
 	"github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"
 )
