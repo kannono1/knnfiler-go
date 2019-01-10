@@ -10,6 +10,7 @@ type AppData struct{
 	Wid int
 	CurrentDirectory[2]string
 	CurrentCursorIndex[2]int
+	CurrentScreenCursorIndex[2]int
 	FileList[2][]FileInfo
 	FileListRowNum[2]int
 	MaxScreenListRowNum int
@@ -30,13 +31,37 @@ func (a *AppData) EnterDir(wid int){
 func (a *AppData) GetListFileName(wid int, i int) string {
 	return a.FileList[wid][i].FileName
 }
-func (a *AppData) GotoDir(wid int, dir string){
+func (a *AppData) initCursorIndex(wid int){
 	a.CurrentCursorIndex[wid] = 0
+	a.CurrentScreenCursorIndex[wid] = 0
+}
+func (a *AppData) GotoDir(wid int, dir string){
+	a.initCursorIndex(wid)
 	a.CurrentDirectory[wid] = dir
 	a.ReadDir(wid, a.CurrentDirectory[wid])
 }
 func (a *AppData) GotoParentDir(wid int){
 	a.GotoDir(wid, filepath.Dir(a.CurrentDirectory[wid]))
+}
+func (a *AppData) DownCursor(wid int) {
+	a.CurrentScreenCursorIndex[wid]++
+	if a.CurrentScreenCursorIndex[wid] > (a.MaxScreenListRowNum -1) {
+		a.CurrentScreenCursorIndex[wid] = (a.MaxScreenListRowNum -1)
+	} else if a.CurrentScreenCursorIndex[wid] > (a.FileListRowNum[wid] -1) {
+		a.CurrentScreenCursorIndex[wid] = (a.FileListRowNum[wid] -1)
+	}
+	if a.CurrentCursorIndex[a.Wid] < a.FileListRowNum[a.Wid]-1 {
+		a.CurrentCursorIndex[a.Wid] += 1
+	}
+}
+func (a *AppData) UpCursor(wid int) {
+	a.CurrentScreenCursorIndex[wid]--
+	if a.CurrentScreenCursorIndex[wid] < 0 {
+		a.CurrentScreenCursorIndex[wid] = 0
+	}
+	if a.CurrentCursorIndex[a.Wid] > 0 {
+		a.CurrentCursorIndex[a.Wid] -= 1
+	}
 }
 
 func (a *AppData) Initialize() {

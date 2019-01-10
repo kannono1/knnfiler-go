@@ -63,7 +63,7 @@ func drawList(wid int) {
 	if ll > a.MaxScreenListRowNum {
 		ll = a.MaxScreenListRowNum
 	}
-	log.Print("Offset=", offset, a.CurrentCursorIndex[wid], a.MaxScreenListRowNum, "w=", wid)
+	log.Print("Offset=", offset, a.CurrentCursorIndex[wid], a.MaxScreenListRowNum, " w=", wid, " si=", a.CurrentScreenCursorIndex[wid])
 	for i := 0; i < ll; i++ {
 		cf, cb := getRowColor(wid, i +offset)
 		drawX(w2x, 2+i, a.FileList[wid][i +offset].FileName, cf, cb)
@@ -88,16 +88,6 @@ func initialize() {
 	a.Initialize()
 }
 
-func cursorDown() {
-	if a.CurrentCursorIndex[a.Wid] < a.FileListRowNum[a.Wid]-1 {
-		a.CurrentCursorIndex[a.Wid] += 1
-	}
-}
-func cursorUp() {
-	if a.CurrentCursorIndex[a.Wid] > 0 {
-		a.CurrentCursorIndex[a.Wid] -= 1
-	}
-}
 func switchWindow() {
 	if a.Wid == 0 {
 		a.Wid = 1
@@ -123,9 +113,9 @@ MAINLOOP:
 		case termbox.EventKey:
 			switch ev.Key {
 			case termbox.KeyArrowDown:
-				cursorDown()
+				a.DownCursor(a.Wid)
 			case termbox.KeyArrowUp:
-				cursorUp()
+				a.UpCursor(a.Wid)
 			case termbox.KeyEsc:
 				break MAINLOOP
 			case termbox.KeyTab:
@@ -136,9 +126,9 @@ MAINLOOP:
 				case 104: // h
 					a.GotoParentDir(a.Wid)
 				case 106: // j
-					cursorDown()
+					a.DownCursor(a.Wid)
 				case 107: // h
-					cursorUp()
+					a.UpCursor(a.Wid)
 				case 108: // l
 					enter()
 				case 113: // q
