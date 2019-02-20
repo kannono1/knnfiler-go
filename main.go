@@ -119,6 +119,8 @@ MAINLOOP:
 			default:
 				//log.Print("key", ev.Key, ev.Ch)
 				switch ev.Ch {
+				case 99: // c
+					a.Copy()
 				case 104: // h
 					a.GotoParentDir(a.Wid)
 				case 106: // j

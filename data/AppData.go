@@ -1,11 +1,10 @@
 package data
-
 import (
+	"../filesys"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 )
-
 type AppData struct {
 	Wid                      int
 	CurrentDirectory         [2]string
@@ -15,7 +14,6 @@ type AppData struct {
 	FileListRowNum           [2]int
 	MaxScreenListRowNum      int
 }
-
 func (a *AppData) ReadDir(wid int, dir string) {
 	files, _ := ioutil.ReadDir(dir)
 	a.FileListRowNum[wid] = len(files)
@@ -27,6 +25,15 @@ func (a *AppData) ReadDir(wid int, dir string) {
 func (a *AppData) EnterDir(wid int) {
 	dir := filepath.Join(a.CurrentDirectory[wid], a.GetListFileName(wid, a.CurrentCursorIndex[wid]))
 	a.GotoDir(wid, dir)
+}
+func (a *AppData) Copy() {
+	cwid := a.Wid
+	owid := a.Wid^1
+	fn := a.GetListFileName(cwid, a.CurrentCursorIndex[cwid])
+	from := filepath.Join(a.CurrentDirectory[cwid], fn)
+	to   := filepath.Join(a.CurrentDirectory[owid], fn)
+	filesys.Copy(from, to)
+	a.ReadDir(owid, a.CurrentDirectory[owid])
 }
 func (a *AppData) GetListFileName(wid int, i int) string {
 	return a.FileList[wid][i].FileName
@@ -63,7 +70,6 @@ func (a *AppData) UpCursor(wid int) {
 		a.CurrentCursorIndex[a.Wid] -= 1
 	}
 }
-
 func (a *AppData) Initialize() {
 	a.CurrentDirectory[0], _ = os.Getwd()
 	a.CurrentDirectory[1], _ = os.Getwd()
