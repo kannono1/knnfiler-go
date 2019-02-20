@@ -84,17 +84,6 @@ func initialize() {
 	a.Initialize()
 }
 
-func switchWindow() {
-	if a.Wid == 0 {
-		a.Wid = 1
-	} else {
-		a.Wid = 0
-	}
-}
-func enter() {
-	a.EnterDir(a.Wid)
-}
-
 func main() {
 	initialize()
 	err := termbox.Init()
@@ -115,7 +104,7 @@ MAINLOOP:
 			case termbox.KeyEsc:
 				break MAINLOOP
 			case termbox.KeyTab:
-				switchWindow()
+				a.SwitchWindow()
 			default:
 				//log.Print("key", ev.Key, ev.Ch)
 				switch ev.Ch {
@@ -130,7 +119,7 @@ MAINLOOP:
 				case 107: // h
 					a.UpCursor(a.Wid)
 				case 108: // l
-					enter()
+					a.EnterDir(a.Wid)
 				case 113: // q
 					break MAINLOOP
 				}

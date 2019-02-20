@@ -86,3 +86,10 @@ func (a *AppData) Initialize() {
 	a.ReadDir(0, a.CurrentDirectory[0])
 	a.ReadDir(1, a.CurrentDirectory[1])
 }
+func (a *AppData) SwitchWindow() {
+	if a.Wid == 0 {
+		a.Wid = 1
+	} else {
+		a.Wid = 0
+	}
+}
