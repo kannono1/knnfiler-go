@@ -35,6 +35,8 @@ go build -o knnfiler main.go
 
 ## Key
 ```
+c copy
+d delete
 h parent dir
 j cursor down
 k cursor up

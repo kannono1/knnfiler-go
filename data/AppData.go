@@ -21,6 +21,9 @@ func (a *AppData) ReadDir(wid int, dir string) {
 	for i, f := range files {
 		a.FileList[wid][i].FileName = f.Name()
 	}
+	if a.CurrentCursorIndex[wid] >= len(files) {
+		a.initCursorIndex(wid)
+	}
 }
 func (a *AppData) EnterDir(wid int) {
 	dir := filepath.Join(a.CurrentDirectory[wid], a.GetListFileName(wid, a.CurrentCursorIndex[wid]))
@@ -34,6 +37,13 @@ func (a *AppData) Copy() {
 	to   := filepath.Join(a.CurrentDirectory[owid], fn)
 	filesys.Copy(from, to)
 	a.ReadDir(owid, a.CurrentDirectory[owid])
+}
+func (a *AppData) Delete() {
+	cwid := a.Wid
+	fn := a.GetListFileName(cwid, a.CurrentCursorIndex[cwid])
+	src := filepath.Join(a.CurrentDirectory[cwid], fn)
+	filesys.Delete(src)
+	a.ReadDir(cwid, a.CurrentDirectory[cwid])
 }
 func (a *AppData) GetListFileName(wid int, i int) string {
 	return a.FileList[wid][i].FileName

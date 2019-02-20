@@ -19,3 +19,8 @@ func Copy(from string, to string) {
         panic(err)
     }
 }
+func Delete(src string) {
+    if err := os.RemoveAll(src); err != nil {
+        panic(err)
+    }
+}

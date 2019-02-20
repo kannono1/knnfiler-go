@@ -121,6 +121,8 @@ MAINLOOP:
 				switch ev.Ch {
 				case 99: // c
 					a.Copy()
+				case 100: // d
+					a.Delete()
 				case 104: // h
 					a.GotoParentDir(a.Wid)
 				case 106: // j
