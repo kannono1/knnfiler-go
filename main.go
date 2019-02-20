@@ -2,7 +2,7 @@ package main
 
 import (
 	"./data"
-	"github.com/mattn/go-runewidth"
+	"./view"
 	"github.com/nsf/termbox-go"
 	"log"
 	"os"
@@ -23,62 +23,11 @@ var colors = []termbox.Attribute{
 }
 var a = &data.AppData{}
 
-func drawX(x, y int, str string, fgColor int, bgColor int) {
-	runes := []rune(str)
-	for _, r := range runes {
-		termbox.SetCell(x, y, r, colors[fgColor], colors[bgColor])
-		x += runewidth.RuneWidth(r)
-	}
-}
-
-func drawHeader() {
-	drawX(0, 0, a.CurrentDirectory[a.Wid], 0, 0)
-	drawX(0, 1, "         ", 0, 1)
-}
-
-func getRowColor(w int, i int) (int, int) {
-	if w != a.Wid {
-		return 0, 0
-	}
-	if i == a.CurrentCursorIndex[a.Wid] {
-		return 1, 3
-	} else {
-		return 0, 0
-	}
-}
-
-func drawList(wid int) {
-	w, h := termbox.Size()
-	a.MaxScreenListRowNum = h - 2
-	w2x := 0
-	if wid == 1 {
-		w2x = int(w / 2)
-	}
-	offset := a.CurrentCursorIndex[wid] - (a.MaxScreenListRowNum - 1) + (a.MaxScreenListRowNum - 1 - a.CurrentScreenCursorIndex[wid])
-	ll := a.FileListRowNum[wid]
-	if ll > a.MaxScreenListRowNum {
-		ll = a.MaxScreenListRowNum
-	}
-	log.Print("Offset=", offset, a.CurrentCursorIndex[wid], a.MaxScreenListRowNum, " w=", wid, " si=", a.CurrentScreenCursorIndex[wid])
-	for i := 0; i < ll; i++ {
-		cf, cb := getRowColor(wid, i+offset)
-		drawX(w2x, 2+i, a.FileList[wid][i+offset].FileName, cf, cb)
-	}
-}
-func redraw() {
-	termbox.Clear(coldef, coldef)
-	drawHeader()
-	drawList(0)
-	drawList(1)
-	termbox.Flush()
-}
-
 func initialize() {
 	logfile, err := os.Create("test.log")
 	if err != nil {
 		panic("cannnot open test.log:" + err.Error())
 	}
-	// defer logfile.Close()
 	log.SetOutput(logfile)
 	log.Println("START !!")
 	a.Initialize()
@@ -91,7 +40,7 @@ func main() {
 		panic(err)
 	}
 	defer termbox.Close()
-	redraw()
+	view.Redraw(a)
 MAINLOOP:
 	for {
 		switch ev := termbox.PollEvent(); ev.Type {
@@ -125,6 +74,6 @@ MAINLOOP:
 				}
 			}
 		}
-		redraw()
+		view.Redraw(a)
 	}
 }
