@@ -58,6 +58,10 @@ MAINLOOP:
 					a.EnterDir(a.Wid)
 				case 113: // q
 					break MAINLOOP
+				case 121: // y
+					if( a.WindowMode == data.WM_CONFIRM ) {
+						a.Confirmed()
+					}
 				}
 			}
 		}

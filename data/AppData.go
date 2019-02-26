@@ -2,12 +2,14 @@ package data
 import (
 	"../filesys"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 )
 type AppData struct {
 	Wid                      int
 	ConfirmMessage string
+	ConfirmedFunction func()
 	CurrentDirectory         [2]string
 	CurrentCursorIndex       [2]int
 	CurrentScreenCursorIndex [2]int
@@ -17,6 +19,7 @@ type AppData struct {
 	WindowMode WindowMode
 }
 func (a *AppData) ReadDir(wid int, dir string) {
+	log.Print("-- ReadDir ", dir);
 	files, _ := ioutil.ReadDir(dir)
 	a.FileListRowNum[wid] = len(files)
 	a.FileList[wid] = make([]FileInfo, a.FileListRowNum[wid])
@@ -46,6 +49,11 @@ func (a *AppData) Escape() {
 func (a *AppData) DeleteConfirm() {
 	a.WindowMode = WM_CONFIRM
 	a.ConfirmMessage = "Are you sure you want to delete ?"
+	a.ConfirmedFunction = a.Delete
+}
+func (a *AppData) Confirmed() {
+	a.WindowMode = WM_FILER
+	a.ConfirmedFunction()
 }
 func (a *AppData) Delete() {
 	cwid := a.Wid

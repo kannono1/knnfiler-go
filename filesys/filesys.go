@@ -1,6 +1,7 @@
 package filesys
 import (
 	"io"
+	"log"
 	"os"
 )
 func Copy(from string, to string) {
@@ -23,4 +24,5 @@ func Delete(src string) {
     if err := os.RemoveAll(src); err != nil {
         panic(err)
     }
+	log.Print("-- Deleted ", src);
 }
