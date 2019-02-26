@@ -8,19 +8,6 @@ import (
 	"os"
 )
 
-const coldef = termbox.ColorDefault
-
-var colors = []termbox.Attribute{
-	termbox.ColorDefault,
-	termbox.ColorBlack,
-	termbox.ColorRed,
-	termbox.ColorGreen,
-	termbox.ColorYellow,
-	termbox.ColorBlue,
-	termbox.ColorMagenta,
-	termbox.ColorCyan,
-	termbox.ColorWhite,
-}
 var a = &data.AppData{}
 
 func initialize() {

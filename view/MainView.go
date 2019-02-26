@@ -19,7 +19,7 @@ var colors = []termbox.Attribute{
 	termbox.ColorCyan,
 	termbox.ColorWhite,
 }
-var a = &data.AppData{}
+var a *data.AppData
 
 func drawX(x, y int, str string, fgColor int, bgColor int) {
 	runes := []rune(str)
