@@ -62,11 +62,18 @@ func drawList(wid int) {
 		drawX(w2x, 2+i, a.FileList[wid][i+offset].FileName, cf, cb)
 	}
 }
+func drawConfirm(){
+	drawX(1, 1, a.ConfirmMessage, 0, 0)
+}
 func Redraw(appData *data.AppData) {
 	a = appData
 	termbox.Clear(coldef, coldef)
-	drawHeader()
-	drawList(0)
-	drawList(1)
+	if a.WindowMode == data.WM_CONFIRM {
+		drawConfirm()
+	} else {
+		drawHeader()
+		drawList(0)
+		drawList(1)
+	}
 	termbox.Flush()
 }

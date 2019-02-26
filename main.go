@@ -38,7 +38,7 @@ MAINLOOP:
 			case termbox.KeyArrowUp:
 				a.UpCursor(a.Wid)
 			case termbox.KeyEsc:
-				break MAINLOOP
+				a.Escape()
 			case termbox.KeyTab:
 				a.SwitchWindow()
 			default:
@@ -47,7 +47,7 @@ MAINLOOP:
 				case 99: // c
 					a.Copy()
 				case 100: // d
-					a.Delete()
+					a.DeleteConfirm()
 				case 104: // h
 					a.GotoParentDir(a.Wid)
 				case 106: // j

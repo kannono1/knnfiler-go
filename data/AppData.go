@@ -7,12 +7,14 @@ import (
 )
 type AppData struct {
 	Wid                      int
+	ConfirmMessage string
 	CurrentDirectory         [2]string
 	CurrentCursorIndex       [2]int
 	CurrentScreenCursorIndex [2]int
 	FileList                 [2][]FileInfo
 	FileListRowNum           [2]int
 	MaxScreenListRowNum      int
+	WindowMode WindowMode
 }
 func (a *AppData) ReadDir(wid int, dir string) {
 	files, _ := ioutil.ReadDir(dir)
@@ -37,6 +39,13 @@ func (a *AppData) Copy() {
 	to   := filepath.Join(a.CurrentDirectory[owid], fn)
 	filesys.Copy(from, to)
 	a.ReadDir(owid, a.CurrentDirectory[owid])
+}
+func (a *AppData) Escape() {
+	a.WindowMode = WM_FILER
+}
+func (a *AppData) DeleteConfirm() {
+	a.WindowMode = WM_CONFIRM
+	a.ConfirmMessage = "Are you sure you want to delete ?"
 }
 func (a *AppData) Delete() {
 	cwid := a.Wid
