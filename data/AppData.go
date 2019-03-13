@@ -25,6 +25,7 @@ func (a *AppData) ReadDir(wid int, dir string) {
 	a.FileList[wid] = make([]FileInfo, a.FileListRowNum[wid])
 	for i, f := range files {
 		a.FileList[wid][i].FileName = f.Name()
+		a.FileList[wid][i].FileSize = f.Size()
 	}
 	if a.CurrentCursorIndex[wid] >= len(files) {
 		a.initCursorIndex(wid)
