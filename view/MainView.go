@@ -2,7 +2,6 @@ package view
 
 import (
 	"../data"
-	"strconv"
 	"github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"
 )
@@ -62,7 +61,7 @@ func drawList(wid int) {
 	for i := 0; i < ll; i++ {
 		cf, cb := getRowColor(wid, i+offset)
 		drawX(left, 2+i, a.FileList[wid][i+offset].FileName, cf, cb)
-		drawX(left+w2x-8, 2+i, strconv.FormatInt(a.FileList[wid][i+offset].FileSize, 10), cf, cb)
+		drawX(left+w2x-8, 2+i, a.FileList[wid][i+offset].GetFileSizeStr(), cf, cb)
 	}
 }
 func drawConfirm(){

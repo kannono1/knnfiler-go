@@ -19,13 +19,15 @@ type AppData struct {
 	WindowMode WindowMode
 }
 func (a *AppData) ReadDir(wid int, dir string) {
-	log.Print("-- ReadDir ", dir);
+	log.Print("-- ReadDir ", dir)
 	files, _ := ioutil.ReadDir(dir)
 	a.FileListRowNum[wid] = len(files)
 	a.FileList[wid] = make([]FileInfo, a.FileListRowNum[wid])
 	for i, f := range files {
 		a.FileList[wid][i].FileName = f.Name()
 		a.FileList[wid][i].FileSize = f.Size()
+		a.FileList[wid][i].IsDir = f.IsDir()
+		//log.Print(f.Name(), " : ", f.Mode(), f.IsDir() )
 	}
 	if a.CurrentCursorIndex[wid] >= len(files) {
 		a.initCursorIndex(wid)
