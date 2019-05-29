@@ -3,6 +3,8 @@ package main
 import (
 	"./data"
 	"./view"
+	"fyne.io/fyne/widget"
+	"fyne.io/fyne/app"
 	"github.com/nsf/termbox-go"
 	"log"
 	"os"
@@ -21,6 +23,20 @@ func initialize() {
 }
 
 func main() {
+	initialize()
+	log.Println("main fyne ver")
+	app := app.New()
+	w := app.NewWindow("Knnfiler")
+	w.SetContent(widget.NewVBox(
+		widget.NewLabel("Hello Knnfiler "),
+		widget.NewLabel("日本語のラベルのテスト用"),
+		widget.NewButton("Quit", func(){
+			app.Quit()
+		}),
+	))
+	w.ShowAndRun()
+}
+func mainB() {
 	initialize()
 	err := termbox.Init()
 	if err != nil {

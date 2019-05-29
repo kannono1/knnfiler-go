@@ -4,7 +4,7 @@ knnfiler-go
 ## dev
 ```
 - Go
-go version go1.11.4 windows/amd64
+go version go1.12.5
 
 - IDE
 VScode
@@ -12,15 +12,13 @@ VScode
 - ProjectDir
 ~/go/src/github.com/kannono1/knnfiler-go/
 
-- Shell
-Window Power Shell
-
 ```
 
 ## init
 ```
 go get -u github.com/kannono1/knnfiler-go
 go get -u github.com/nsf/termbox-go
+go get fyne.io/fyne
 ```
 
 ## run
