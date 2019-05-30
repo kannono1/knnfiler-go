@@ -1,6 +1,7 @@
 package view
 
 import (
+	"fmt"
 	"../data"
 	"github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"
@@ -45,6 +46,13 @@ func getRowColor(w int, i int) (int, int) {
 	}
 }
 
+func getRowString(fn string, size string) (string) {
+	fn2 := fmt.Sprintf("%-31s", fn)[0:30]
+	size2 := fmt.Sprintf("%11s", size)
+	size3 := size2[len(size2)-10:]
+	return fmt.Sprintf("%s    %s", fn2, size3)
+}
+
 func drawList(wid int) {
 	w, h := termbox.Size()
 	a.MaxScreenListRowNum = h - 2
@@ -60,8 +68,11 @@ func drawList(wid int) {
 	}
 	for i := 0; i < ll; i++ {
 		cf, cb := getRowColor(wid, i+offset)
-		drawX(left, 2+i, a.FileList[wid][i+offset].FileName, cf, cb)
-		drawX(left+w2x-8, 2+i, a.FileList[wid][i+offset].GetFileSizeStr(), cf, cb)
+		fn := a.FileList[wid][i+offset].FileName
+		size := a.FileList[wid][i+offset].GetFileSizeStr()
+		s := getRowString(fn, size)
+		drawX(left, 2+i, s, cf, cb)
+		// drawX(left+w2x-8, 2+i, a.FileList[wid][i+offset].GetFileSizeStr(), cf, cb)
 	}
 }
 func drawConfirm(){
