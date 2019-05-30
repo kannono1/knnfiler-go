@@ -27,6 +27,7 @@ func (a *AppData) ReadDir(wid int, dir string) {
 		a.FileList[wid][i].FileName = f.Name()
 		a.FileList[wid][i].FileSize = f.Size()
 		a.FileList[wid][i].IsDir = f.IsDir()
+		a.FileList[wid][i].ModTime = f.ModTime()
 		//log.Print(f.Name(), " : ", f.Mode(), f.IsDir() )
 	}
 	if a.CurrentCursorIndex[wid] >= len(files) {

@@ -46,11 +46,11 @@ func getRowColor(w int, i int) (int, int) {
 	}
 }
 
-func getRowString(fn string, size string) (string) {
+func getRowString(fn string, size string, modtime string) (string) {
 	fn2 := runewidth.FillRight(fn, 30)
 	fn3 := runewidth.Truncate(fn2, 30, "...")
 	size2 := runewidth.FillLeft(size, 12)
-	return fmt.Sprintf("%s %s", fn3, size2)
+	return fmt.Sprintf("%s %s %s", fn3, size2, modtime)
 }
 
 func drawList(wid int) {
@@ -70,7 +70,8 @@ func drawList(wid int) {
 		cf, cb := getRowColor(wid, i+offset)
 		fn := a.FileList[wid][i+offset].FileName
 		size := a.FileList[wid][i+offset].GetFileSizeStr()
-		s := getRowString(fn, size)
+		modtime := a.FileList[wid][i+offset].GetModTimeStr()
+		s := getRowString(fn, size, modtime)
 		drawX(left, 2+i, s, cf, cb)
 	}
 }
