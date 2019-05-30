@@ -4,16 +4,12 @@ knnfiler-go
 ## dev
 ```
 - Go
-go version go1.11.4 windows/amd64
+go version go1.12.5
 
-- IDE
-VScode
 
 - ProjectDir
 ~/go/src/github.com/kannono1/knnfiler-go/
 
-- Shell
-Window Power Shell
 
 ```
 
@@ -25,12 +21,12 @@ go get -u github.com/nsf/termbox-go
 
 ## run
 ```
-go run main.go
+go run knnfiler.go
 ```
 
 ## build
 ```
-go build -o knnfiler main.go
+go build -o knnfiler knnfiler.go
 ```
 
 ## Key
