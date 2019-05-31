@@ -87,6 +87,8 @@ MAINLOOP:
 					switch ev.Ch {
 					case 113: // q
 						break MAINLOOP
+					default:
+						a.Escape()
 					}
 				}
 			}

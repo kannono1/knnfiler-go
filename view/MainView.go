@@ -2,6 +2,7 @@ package view
 
 import (
 	"fmt"
+	"regexp"
 	"../data"
 	"github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"
@@ -90,6 +91,10 @@ func drawConfirm(){
 }
 func textPreview(){
 	drawX(0, 0, "Text preview", data.COLOR_INDEX_WHITE, data.COLOR_INDEX_BLACK)
+	s := a.CurrentTargetContent
+	for i, v := range regexp.MustCompile("\r\n|\n\r|\n|\r").Split(s, -1) {
+		drawX(0, i+1, v, data.COLOR_INDEX_WHITE, data.COLOR_INDEX_BLACK)
+    }
 }
 func Redraw(appData *data.AppData) {
 	a = appData

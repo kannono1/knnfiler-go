@@ -1,10 +1,10 @@
 package data
 import (
-	"../filesys"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
+	"../util"
 )
 type AppData struct {
 	Wid                      int
@@ -13,25 +13,20 @@ type AppData struct {
 	CurrentDirectory         [2]string
 	CurrentCursorIndex       [2]int
 	CurrentScreenCursorIndex [2]int
+	CurrentTargetContent string
 	FileList                 [2][]FileInfo
 	FileListRowNum           [2]int
 	MaxScreenListRowNum      int
 	WindowMode WindowMode
 }
-func (a *AppData) ReadDir(wid int, dir string) {
-	log.Print("-- ReadDir ", dir)
-	files, _ := ioutil.ReadDir(dir)
-	a.FileListRowNum[wid] = len(files)
-	a.FileList[wid] = make([]FileInfo, a.FileListRowNum[wid])
-	for i, f := range files {
-		a.FileList[wid][i].FileName = f.Name()
-		a.FileList[wid][i].FileSize = f.Size()
-		a.FileList[wid][i].IsDir = f.IsDir()
-		a.FileList[wid][i].ModTime = f.ModTime()
-	}
-	if a.CurrentCursorIndex[wid] >= len(files) {
-		a.initCursorIndex(wid)
-	}
+func (a *AppData) Copy() {
+	cwid := a.Wid
+	owid := a.Wid^1
+	fn := a.GetListFileName(cwid, a.CurrentCursorIndex[cwid])
+	from := filepath.Join(a.CurrentDirectory[cwid], fn)
+	to   := filepath.Join(a.CurrentDirectory[owid], fn)
+	util.Copy(from, to)
+	a.ReadDir(owid, a.CurrentDirectory[owid])
 }
 func (a *AppData) Enter(wid int) {
 	ind := a.CurrentCursorIndex[wid]
@@ -42,15 +37,6 @@ func (a *AppData) Enter(wid int) {
 	} else {
 		a.Preview(wid, path)
 	}
-}
-func (a *AppData) Copy() {
-	cwid := a.Wid
-	owid := a.Wid^1
-	fn := a.GetListFileName(cwid, a.CurrentCursorIndex[cwid])
-	from := filepath.Join(a.CurrentDirectory[cwid], fn)
-	to   := filepath.Join(a.CurrentDirectory[owid], fn)
-	filesys.Copy(from, to)
-	a.ReadDir(owid, a.CurrentDirectory[owid])
 }
 func (a *AppData) Escape() {
 	a.WindowMode = WM_FILER
@@ -68,7 +54,7 @@ func (a *AppData) Delete() {
 	cwid := a.Wid
 	fn := a.GetListFileName(cwid, a.CurrentCursorIndex[cwid])
 	src := filepath.Join(a.CurrentDirectory[cwid], fn)
-	filesys.Delete(src)
+	util.Delete(src)
 	a.ReadDir(cwid, a.CurrentDirectory[cwid])
 }
 func (a *AppData) GetListFileInfo(wid int, i int) FileInfo {
@@ -103,7 +89,26 @@ func (a *AppData) DownCursor(wid int) {
 func (a *AppData) Preview(wid int, path string) {
 	a.WindowMode = WM_TEXT_PREVIEW
 	// a.CurrentDirectory[wid] = path
-	// a.ReadDir(wid, a.CurrentDirectory[wid])
+	a.ReadFile(wid, path)
+}
+func (a *AppData) ReadFile(wid int, path string) {
+	log.Print("-- ReadFile ", path)
+	a.CurrentTargetContent = util.TabToSpace( util.ReadFile(path) )
+}
+func (a *AppData) ReadDir(wid int, dir string) {
+	log.Print("-- ReadDir ", dir)
+	files, _ := ioutil.ReadDir(dir)
+	a.FileListRowNum[wid] = len(files)
+	a.FileList[wid] = make([]FileInfo, a.FileListRowNum[wid])
+	for i, f := range files {
+		a.FileList[wid][i].FileName = f.Name()
+		a.FileList[wid][i].FileSize = f.Size()
+		a.FileList[wid][i].IsDir = f.IsDir()
+		a.FileList[wid][i].ModTime = f.ModTime()
+	}
+	if a.CurrentCursorIndex[wid] >= len(files) {
+		a.initCursorIndex(wid)
+	}
 }
 func (a *AppData) UpCursor(wid int) {
 	a.CurrentScreenCursorIndex[wid]--
