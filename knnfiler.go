@@ -59,6 +59,8 @@ MAINLOOP:
 						a.Enter(a.Wid)
 					case 113: // q
 						break MAINLOOP
+					case data.KEYCODE_x:
+						a.Execute(a.Wid)
 					}
 				}
 			}

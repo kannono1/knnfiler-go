@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 )
 
 func Copy(from string, to string) {
@@ -28,6 +29,11 @@ func Delete(src string) {
 		panic(err)
 	}
 	log.Print("-- Deleted ", src)
+}
+func Execute(path string) {
+    if err := exec.Command("open", path).Start(); err != nil { // Mac
+        panic(err)
+    }
 }
 func ReadFile(path string) (string) {
 	f, err := os.Open(path)

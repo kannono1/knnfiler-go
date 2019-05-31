@@ -28,19 +28,6 @@ func (a *AppData) Copy() {
 	util.Copy(from, to)
 	a.ReadDir(owid, a.CurrentDirectory[owid])
 }
-func (a *AppData) Enter(wid int) {
-	ind := a.CurrentCursorIndex[wid]
-	isDir := a.GetListFileInfo(wid, ind).IsDir
-	path := filepath.Join(a.CurrentDirectory[wid], a.GetListFileName(wid, ind))
-	if isDir {
-		a.GotoDir(wid, path)
-	} else {
-		a.Preview(wid, path)
-	}
-}
-func (a *AppData) Escape() {
-	a.WindowMode = WM_FILER
-}
 func (a *AppData) DeleteConfirm() {
 	a.WindowMode = WM_CONFIRM
 	a.ConfirmMessage = "Are you sure you want to delete ?"
@@ -57,24 +44,6 @@ func (a *AppData) Delete() {
 	util.Delete(src)
 	a.ReadDir(cwid, a.CurrentDirectory[cwid])
 }
-func (a *AppData) GetListFileInfo(wid int, i int) FileInfo {
-	return a.FileList[wid][i]
-}
-func (a *AppData) GetListFileName(wid int, i int) string {
-	return a.FileList[wid][i].FileName
-}
-func (a *AppData) initCursorIndex(wid int) {
-	a.CurrentCursorIndex[wid] = 0
-	a.CurrentScreenCursorIndex[wid] = 0
-}
-func (a *AppData) GotoDir(wid int, dir string) {
-	a.initCursorIndex(wid)
-	a.CurrentDirectory[wid] = dir
-	a.ReadDir(wid, a.CurrentDirectory[wid])
-}
-func (a *AppData) GotoParentDir(wid int) {
-	a.GotoDir(wid, filepath.Dir(a.CurrentDirectory[wid]))
-}
 func (a *AppData) DownCursor(wid int) {
 	a.CurrentScreenCursorIndex[wid]++
 	if a.CurrentScreenCursorIndex[wid] > (a.MaxScreenListRowNum - 1) {
@@ -85,6 +54,43 @@ func (a *AppData) DownCursor(wid int) {
 	if a.CurrentCursorIndex[a.Wid] < a.FileListRowNum[a.Wid]-1 {
 		a.CurrentCursorIndex[a.Wid] += 1
 	}
+}
+func (a *AppData) Enter(wid int) {
+	ind := a.CurrentCursorIndex[wid]
+	isDir := a.GetListFileInfo(wid, ind).IsDir
+	path := filepath.Join(a.CurrentDirectory[wid], a.GetListFileName(wid, ind))
+	if isDir {
+		a.GotoDir(wid, path)
+	} else {
+		a.Preview(wid, path)
+	}
+}
+func (a *AppData) Execute(wid int) {
+	ind := a.CurrentCursorIndex[wid]
+	// isDir := a.GetListFileInfo(wid, ind).IsDir
+	path := filepath.Join(a.CurrentDirectory[wid], a.GetListFileName(wid, ind))
+	util.Execute(path)
+}
+func (a *AppData) Escape() {
+	a.WindowMode = WM_FILER
+}
+func (a *AppData) GetListFileInfo(wid int, i int) FileInfo {
+	return a.FileList[wid][i]
+}
+func (a *AppData) GetListFileName(wid int, i int) string {
+	return a.FileList[wid][i].FileName
+}
+func (a *AppData) GotoDir(wid int, dir string) {
+	a.initCursorIndex(wid)
+	a.CurrentDirectory[wid] = dir
+	a.ReadDir(wid, a.CurrentDirectory[wid])
+}
+func (a *AppData) GotoParentDir(wid int) {
+	a.GotoDir(wid, filepath.Dir(a.CurrentDirectory[wid]))
+}
+func (a *AppData) initCursorIndex(wid int) {
+	a.CurrentCursorIndex[wid] = 0
+	a.CurrentScreenCursorIndex[wid] = 0
 }
 func (a *AppData) Preview(wid int, path string) {
 	a.WindowMode = WM_TEXT_PREVIEW
