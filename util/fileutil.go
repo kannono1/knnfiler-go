@@ -50,7 +50,8 @@ func Execute(path string) {
 func ReadFile(path string) (string) {
 	f, err := os.Open(path)
 	if err != nil {
-		log.Println("File read error")
+        log.Println("File read error")
+        return ""
 	}
 	defer f.Close()
 	b, err := ioutil.ReadAll(f)

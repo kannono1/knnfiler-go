@@ -100,7 +100,11 @@ func (a *AppData) initCursorIndex(wid int) {
 func (a *AppData) Initialize() {
 	a.WindowMode = WM_FILER
 	util.CreateDir(STORAGE_DIR)
-	a.CurrentDirectory[0] = util.ReadFile(HISTORY_FILE_0)
+	dir := util.ReadFile(HISTORY_FILE_0)
+	if dir == "" {
+		dir, _ = os.Getwd()
+	}
+	a.CurrentDirectory[0] = dir
 	a.CurrentDirectory[1], _ = os.Getwd()
 	a.ReadDir(0, a.CurrentDirectory[0])
 	a.ReadDir(1, a.CurrentDirectory[1])
@@ -114,9 +118,6 @@ func (a *AppData) ReadFileForPreview(wid int, path string) {
 }
 func (a *AppData) ReadDir(wid int, dir string) {
 	log.Print("-- ReadDir ", dir)
-	if dir == "" {
-		dir, _ = os.Getwd()
-	}
 	files, _ := ioutil.ReadDir(dir)
 	a.FileListRowNum[wid] = len(files)
 	a.FileList[wid] = make([]FileInfo, a.FileListRowNum[wid])
