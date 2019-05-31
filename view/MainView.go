@@ -31,27 +31,27 @@ func drawX(x, y int, str string, fgColor int, bgColor int) {
 }
 
 func drawHeader() {
-	drawX(0, 0, a.CurrentDirectory[a.Wid], 0, 0)
-	drawX(0, 1, "         ", 0, 1)
+	drawX(0, 0, a.CurrentDirectory[a.Wid], data.COLOR_INDEX_WHITE, data.COLOR_INDEX_WHITE)
+	drawX(0, 1, "         ", data.COLOR_INDEX_WHITE, data.COLOR_INDEX_BLACK)
 }
 
 func getRowColor(w int, i int) (int, int) {
 	if w != a.Wid {
-		return 0, 0
+		return data.COLOR_INDEX_WHITE, data.COLOR_INDEX_WHITE
 	}
 	isActive := (i == a.CurrentCursorIndex[a.Wid])
 	isDir := a.GetListFileInfo(w, i).IsDir
 	if isActive {
 		if isDir {
-			return 4, 3 // Active = Yellow / Green
+			return data.COLOR_INDEX_YELLOW, data.COLOR_INDEX_GREEN
 		} else {
-			return 1, 3 // Active = Black / Green
+			return data.COLOR_INDEX_BLACK, data.COLOR_INDEX_GREEN
 		}
 	} else {
 		if isDir {
-			return 4, 0
+			return data.COLOR_INDEX_YELLOW, data.COLOR_INDEX_WHITE
 		} else {
-			return 0, 0
+			return data.COLOR_INDEX_WHITE, data.COLOR_INDEX_BLACK
 		}
 	}
 }
@@ -86,7 +86,10 @@ func drawList(wid int) {
 	}
 }
 func drawConfirm(){
-	drawX(1, 1, a.ConfirmMessage, 0, 0)
+	drawX(1, 1, a.ConfirmMessage, data.COLOR_INDEX_WHITE, data.COLOR_INDEX_WHITE)
+}
+func textPreview(){
+	drawX(0, 0, "Text preview", data.COLOR_INDEX_WHITE, data.COLOR_INDEX_BLACK)
 }
 func Redraw(appData *data.AppData) {
 	a = appData
@@ -94,7 +97,7 @@ func Redraw(appData *data.AppData) {
 	if a.WindowMode == data.WM_CONFIRM {
 		drawConfirm()
 	} else if a.WindowMode == data.WM_TEXT_PREVIEW {
-
+		textPreview()
 	} else {
 		drawHeader()
 		drawList(0)
