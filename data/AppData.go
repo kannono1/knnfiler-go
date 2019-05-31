@@ -74,6 +74,11 @@ func (a *AppData) Execute(wid int) {
 func (a *AppData) Escape() {
 	a.WindowMode = WM_FILER
 }
+func (a *AppData) Finalize() {
+	wid := 0
+	dir := a.CurrentDirectory[wid]
+	util.WriteFile(HISTORY_FILE_0, dir)
+}
 func (a *AppData) GetListFileInfo(wid int, i int) FileInfo {
 	return a.FileList[wid][i]
 }
@@ -92,17 +97,26 @@ func (a *AppData) initCursorIndex(wid int) {
 	a.CurrentCursorIndex[wid] = 0
 	a.CurrentScreenCursorIndex[wid] = 0
 }
+func (a *AppData) Initialize() {
+	a.WindowMode = WM_FILER
+	util.CreateDir(STORAGE_DIR)
+	a.CurrentDirectory[0] = util.ReadFile(HISTORY_FILE_0)
+	a.CurrentDirectory[1], _ = os.Getwd()
+	a.ReadDir(0, a.CurrentDirectory[0])
+	a.ReadDir(1, a.CurrentDirectory[1])
+}
 func (a *AppData) Preview(wid int, path string) {
 	a.WindowMode = WM_TEXT_PREVIEW
-	// a.CurrentDirectory[wid] = path
-	a.ReadFile(wid, path)
+	a.ReadFileForPreview(wid, path)
 }
-func (a *AppData) ReadFile(wid int, path string) {
-	log.Print("-- ReadFile ", path)
+func (a *AppData) ReadFileForPreview(wid int, path string) {
 	a.CurrentTargetContent = util.TabToSpace( util.ReadFile(path) )
 }
 func (a *AppData) ReadDir(wid int, dir string) {
 	log.Print("-- ReadDir ", dir)
+	if dir == "" {
+		dir, _ = os.Getwd()
+	}
 	files, _ := ioutil.ReadDir(dir)
 	a.FileListRowNum[wid] = len(files)
 	a.FileList[wid] = make([]FileInfo, a.FileListRowNum[wid])
@@ -124,13 +138,6 @@ func (a *AppData) UpCursor(wid int) {
 	if a.CurrentCursorIndex[a.Wid] > 0 {
 		a.CurrentCursorIndex[a.Wid] -= 1
 	}
-}
-func (a *AppData) Initialize() {
-	a.WindowMode = WM_FILER
-	a.CurrentDirectory[0], _ = os.Getwd()
-	a.CurrentDirectory[1], _ = os.Getwd()
-	a.ReadDir(0, a.CurrentDirectory[0])
-	a.ReadDir(1, a.CurrentDirectory[1])
 }
 func (a *AppData) SwitchWindow() {
 	if a.Wid == 0 {

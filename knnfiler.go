@@ -2,20 +2,24 @@ package main
 
 import (
 	"./data"
+	"./util"
 	"./view"
 	"github.com/nsf/termbox-go"
 	"log"
-	"os"
 )
 
 var a = &data.AppData{}
 
+func finalize() {
+	a.Finalize()
+}
+
 func initialize() {
-	logfile, err := os.Create("test.log")
-	if err != nil {
-		panic("cannnot open test.log:" + err.Error())
-	}
-	log.SetOutput(logfile)
+	// logfile, err := os.Create("test.log")
+	// if err != nil {
+	// 	panic("cannnot open test.log:" + err.Error())
+	// }
+	log.SetOutput(util.CreateFile(data.LOG_FILE))
 	log.Println("START !!")
 	a.Initialize()
 }
@@ -97,4 +101,5 @@ MAINLOOP:
 		}
 		view.Redraw(a)
 	}
+	finalize()
 }
