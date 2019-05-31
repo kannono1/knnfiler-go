@@ -34,8 +34,14 @@ func (a *AppData) ReadDir(wid int, dir string) {
 	}
 }
 func (a *AppData) Enter(wid int) {
-	dir := filepath.Join(a.CurrentDirectory[wid], a.GetListFileName(wid, a.CurrentCursorIndex[wid]))
-	a.GotoDir(wid, dir)
+	ind := a.CurrentCursorIndex[wid]
+	isDir := a.GetListFileInfo(wid, ind).IsDir
+	path := filepath.Join(a.CurrentDirectory[wid], a.GetListFileName(wid, ind))
+	if isDir {
+		a.GotoDir(wid, path)
+	} else {
+		a.Preview(wid, path)
+	}
 }
 func (a *AppData) Copy() {
 	cwid := a.Wid
@@ -94,6 +100,11 @@ func (a *AppData) DownCursor(wid int) {
 		a.CurrentCursorIndex[a.Wid] += 1
 	}
 }
+func (a *AppData) Preview(wid int, path string) {
+	a.WindowMode = WM_TEXT_PREVIEW
+	// a.CurrentDirectory[wid] = path
+	// a.ReadDir(wid, a.CurrentDirectory[wid])
+}
 func (a *AppData) UpCursor(wid int) {
 	a.CurrentScreenCursorIndex[wid]--
 	if a.CurrentScreenCursorIndex[wid] < 0 {
@@ -104,6 +115,7 @@ func (a *AppData) UpCursor(wid int) {
 	}
 }
 func (a *AppData) Initialize() {
+	a.WindowMode = WM_FILER
 	a.CurrentDirectory[0], _ = os.Getwd()
 	a.CurrentDirectory[1], _ = os.Getwd()
 	a.ReadDir(0, a.CurrentDirectory[0])

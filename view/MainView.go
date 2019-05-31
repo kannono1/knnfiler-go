@@ -93,6 +93,8 @@ func Redraw(appData *data.AppData) {
 	termbox.Clear(coldef, coldef)
 	if a.WindowMode == data.WM_CONFIRM {
 		drawConfirm()
+	} else if a.WindowMode == data.WM_TEXT_PREVIEW {
+
 	} else {
 		drawHeader()
 		drawList(0)
