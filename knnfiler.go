@@ -55,7 +55,7 @@ MAINLOOP:
 				case 107: // h
 					a.UpCursor(a.Wid)
 				case 108: // l
-					a.EnterDir(a.Wid)
+					a.Enter(a.Wid)
 				case 113: // q
 					break MAINLOOP
 				case 121: // y

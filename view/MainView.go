@@ -39,10 +39,20 @@ func getRowColor(w int, i int) (int, int) {
 	if w != a.Wid {
 		return 0, 0
 	}
-	if i == a.CurrentCursorIndex[a.Wid] {
-		return 1, 3
+	isActive := (i == a.CurrentCursorIndex[a.Wid])
+	isDir := a.GetListFileInfo(w, i).IsDir
+	if isActive {
+		if isDir {
+			return 4, 3 // Active = Yellow / Green
+		} else {
+			return 1, 3 // Active = Black / Green
+		}
 	} else {
-		return 0, 0
+		if isDir {
+			return 4, 0
+		} else {
+			return 0, 0
+		}
 	}
 }
 

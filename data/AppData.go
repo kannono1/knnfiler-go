@@ -28,13 +28,12 @@ func (a *AppData) ReadDir(wid int, dir string) {
 		a.FileList[wid][i].FileSize = f.Size()
 		a.FileList[wid][i].IsDir = f.IsDir()
 		a.FileList[wid][i].ModTime = f.ModTime()
-		//log.Print(f.Name(), " : ", f.Mode(), f.IsDir() )
 	}
 	if a.CurrentCursorIndex[wid] >= len(files) {
 		a.initCursorIndex(wid)
 	}
 }
-func (a *AppData) EnterDir(wid int) {
+func (a *AppData) Enter(wid int) {
 	dir := filepath.Join(a.CurrentDirectory[wid], a.GetListFileName(wid, a.CurrentCursorIndex[wid]))
 	a.GotoDir(wid, dir)
 }
@@ -65,6 +64,9 @@ func (a *AppData) Delete() {
 	src := filepath.Join(a.CurrentDirectory[cwid], fn)
 	filesys.Delete(src)
 	a.ReadDir(cwid, a.CurrentDirectory[cwid])
+}
+func (a *AppData) GetListFileInfo(wid int, i int) FileInfo {
+	return a.FileList[wid][i]
 }
 func (a *AppData) GetListFileName(wid int, i int) string {
 	return a.FileList[wid][i].FileName
