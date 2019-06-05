@@ -3,6 +3,7 @@ package view
 import (
 	"fmt"
 	"regexp"
+	"strings"
 	"../data"
 	"github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"
@@ -89,6 +90,23 @@ func drawList(wid int) {
 func drawConfirm(){
 	drawX(1, 1, a.ConfirmMessage, data.COLOR_INDEX_WHITE, data.COLOR_INDEX_WHITE)
 }
+func search(){
+	wid := a.Wid
+	ll := a.FileListRowNum[wid]
+	n := 1
+	for i := 0; i < ll; i++ {
+		fn := a.FileList[wid][i].FileName
+		if strings.Contains(fn, a.SearchStr) || a.SearchStr == "" {
+			if a.SearchCursorIndex == n {
+				drawX(0, n, fn, data.COLOR_INDEX_BLACK, data.COLOR_INDEX_GREEN)
+			} else {
+				drawX(0, n, fn, 0, 0)
+			}
+			n += 1
+		}
+	}
+	a.SearchHitNum = n
+}
 func textPreview(){
 	drawX(0, 0, "Text preview", data.COLOR_INDEX_WHITE, data.COLOR_INDEX_BLACK)
 	s := a.CurrentTargetContent
@@ -103,6 +121,8 @@ func Redraw(appData *data.AppData) {
 		drawConfirm()
 	} else if a.WindowMode == data.WM_TEXT_PREVIEW {
 		textPreview()
+	} else if a.WindowMode == data.WM_SEARCH {
+		search()
 	} else {
 		drawHeader()
 		drawList(0)

@@ -6,4 +6,5 @@ const (
     WM_FILER
     WM_CONFIRM
     WM_TEXT_PREVIEW
+    WM_SEARCH
 )

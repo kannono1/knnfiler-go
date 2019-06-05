@@ -4,7 +4,9 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"../util"
+	"github.com/mattn/go-runewidth"
 )
 type AppData struct {
 	Wid                      int
@@ -17,7 +19,14 @@ type AppData struct {
 	FileList                 [2][]FileInfo
 	FileListRowNum           [2]int
 	MaxScreenListRowNum      int
+	SearchCursorIndex int
+	SearchHitNum int
+	SearchStr string
 	WindowMode WindowMode
+}
+func (a *AppData) Confirmed() {
+	a.WindowMode = WM_FILER
+	a.ConfirmedFunction()
 }
 func (a *AppData) Copy() {
 	cwid := a.Wid
@@ -33,10 +42,6 @@ func (a *AppData) DeleteConfirm() {
 	a.ConfirmMessage = "Are you sure you want to delete ?"
 	a.ConfirmedFunction = a.Delete
 }
-func (a *AppData) Confirmed() {
-	a.WindowMode = WM_FILER
-	a.ConfirmedFunction()
-}
 func (a *AppData) Delete() {
 	cwid := a.Wid
 	fn := a.GetListFileName(cwid, a.CurrentCursorIndex[cwid])
@@ -44,15 +49,15 @@ func (a *AppData) Delete() {
 	util.Delete(src)
 	a.ReadDir(cwid, a.CurrentDirectory[cwid])
 }
-func (a *AppData) DownCursor(wid int) {
-	a.CurrentScreenCursorIndex[wid]++
+func (a *AppData) DownCursor(wid int, v int) {
+	a.CurrentScreenCursorIndex[wid] += v
 	if a.CurrentScreenCursorIndex[wid] > (a.MaxScreenListRowNum - 1) {
 		a.CurrentScreenCursorIndex[wid] = (a.MaxScreenListRowNum - 1)
 	} else if a.CurrentScreenCursorIndex[wid] > (a.FileListRowNum[wid] - 1) {
 		a.CurrentScreenCursorIndex[wid] = (a.FileListRowNum[wid] - 1)
 	}
-	if a.CurrentCursorIndex[a.Wid] < a.FileListRowNum[a.Wid]-1 {
-		a.CurrentCursorIndex[a.Wid] += 1
+	if a.CurrentCursorIndex[a.Wid] < a.FileListRowNum[a.Wid] -v {
+		a.CurrentCursorIndex[a.Wid] += v
 	}
 }
 func (a *AppData) Enter(wid int) {
@@ -130,6 +135,55 @@ func (a *AppData) ReadDir(wid int, dir string) {
 	if a.CurrentCursorIndex[wid] >= len(files) {
 		a.initCursorIndex(wid)
 	}
+}
+func (a *AppData) SearchAddString(s string) {
+	a.SearchStr += s
+}
+func (a *AppData) SearchDeleteString() {
+	c := runewidth.StringWidth(a.SearchStr)
+	if c > 1 {
+		a.SearchStr = a.SearchStr[0:c-1]
+	} else {
+		a.SearchStr = ""
+	}
+}
+func (a *AppData) SearchCursorDown() {
+	a.SearchCursorIndex += 1
+	if a.SearchCursorIndex > a.SearchHitNum -1 {
+		a.SearchCursorIndex = a.SearchHitNum -1
+	}
+}
+func (a *AppData) SearchCursorUp() {
+	a.SearchCursorIndex -= 1
+	if a.SearchCursorIndex < 1 {
+		a.SearchCursorIndex = 1
+	}
+}
+func (a *AppData) SearchEnter() {
+	a.WindowMode = WM_FILER
+	wid := a.Wid
+	ll := a.FileListRowNum[wid]
+	n := 1
+	v := 0
+	for i := 0; i < ll; i++ {
+		fn := a.FileList[wid][i].FileName
+		if strings.Contains(fn, a.SearchStr) || a.SearchStr == "" {
+			if a.SearchCursorIndex == n {
+				v = i
+				break
+			}
+			n += 1
+		}
+	}
+	log.Print("SearchEnter:", v )
+	a.CurrentCursorIndex[wid] = 0
+	a.CurrentScreenCursorIndex[wid] = 0
+	a.DownCursor(wid, v)
+}
+func (a *AppData) SearchStart(wid int) {
+	a.WindowMode = WM_SEARCH
+	a.SearchCursorIndex = 1
+	a.SearchStr = ""
 }
 func (a *AppData) UpCursor(wid int) {
 	a.CurrentScreenCursorIndex[wid]--
