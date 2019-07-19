@@ -1,5 +1,6 @@
 package data
 import (
+	"bufio"
 	"io/ioutil"
 	"log"
 	"os"
@@ -80,9 +81,29 @@ func (a *AppData) Escape() {
 	a.WindowMode = WM_FILER
 }
 func (a *AppData) Finalize() {
-	wid := 0
-	dir := a.CurrentDirectory[wid]
-	util.WriteFile(HISTORY_FILE_0, dir)
+	a.ToFile(HISTORY_FILE_0)
+}
+func (a *AppData) FromFile(path string) error {
+	log.Println("FromFile: " + path)
+	file, err := os.Open(path)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+    scanner := bufio.NewScanner(file)
+    for scanner.Scan() {
+		line := scanner.Text()
+		arr := strings.Split(line, "\t")
+		log.Println(line)
+		switch arr[0] {
+		case "DIR0": a.CurrentDirectory[0] = arr[1]
+		case "DIR1": a.CurrentDirectory[1] = arr[1]
+		}
+    }
+    if err := scanner.Err(); err != nil {
+        return err
+    }
+    return nil
 }
 func (a *AppData) GetListFileInfo(wid int, i int) FileInfo {
 	return a.FileList[wid][i]
@@ -105,12 +126,9 @@ func (a *AppData) initCursorIndex(wid int) {
 func (a *AppData) Initialize() {
 	a.WindowMode = WM_FILER
 	util.CreateDir(STORAGE_DIR)
-	dir := util.ReadFile(HISTORY_FILE_0)
-	if dir == "" {
-		dir, _ = os.Getwd()
-	}
-	a.CurrentDirectory[0] = dir
+	a.CurrentDirectory[0], _ = os.Getwd()
 	a.CurrentDirectory[1], _ = os.Getwd()
+	a.FromFile(HISTORY_FILE_0)
 	a.ReadDir(0, a.CurrentDirectory[0])
 	a.ReadDir(1, a.CurrentDirectory[1])
 }
@@ -184,6 +202,12 @@ func (a *AppData) SearchStart(wid int) {
 	a.WindowMode = WM_SEARCH
 	a.SearchCursorIndex = 1
 	a.SearchStr = ""
+}
+func (a *AppData) ToFile(path string) {
+	str := ""
+	str =  str + "DIR0\t" + a.CurrentDirectory[0] + "\n"
+	str =  str + "DIR1\t" + a.CurrentDirectory[1] + "\n"
+	util.WriteFile(path, str)
 }
 func (a *AppData) UpCursor(wid int) {
 	a.CurrentScreenCursorIndex[wid]--
