@@ -1,25 +1,16 @@
 package util
 
 import (
-	"io"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
+	"github.com/otiai10/copy"
 )
 
 func Copy(from string, to string) {
-	src, err := os.Open(from)
-	if err != nil {
-		panic(err)
-	}
-	defer src.Close()
-	dst, err := os.Create(to)
-	if err != nil {
-		panic(err)
-	}
-	defer dst.Close()
-	_, err = io.Copy(dst, src)
+	log.Println("Copy: " + from + " to " + to)
+	err := copy.Copy(from, to)
 	if err != nil {
 		panic(err)
 	}
